@@ -10,7 +10,7 @@ class Main
   def main
     Logger.info("start: Replication Users and Friends")
 
-    # 10人のユーザ情報を取得
+    # 10人のユーザ情報をAdaptorから取得
     begin
       users = Array.new
       userNum = 10
@@ -28,19 +28,19 @@ class Main
 
     # dbにレプリケーション
     begin
-      conn = Repository.connect
+      Repository.connect
       # 一度ユーザ、フレンド情報を削除
-      Repository.dropTables(conn)
+      Repository.dropTables()
       # 再登録
-      Repository.saveUser(conn,users)
-      Repository.saveFriend(conn,users)
+      Repository.saveUser(users)
+      Repository.saveFriend(users)
     rescue => e
-      Repository.rollback(conn)
+      Repository.rollback()
       Logger.error("faild: cannot save Users and Friends")
       Logger.error(e.message)
       exit
     else
-      Repository.commit(conn)
+      Repository.commit()
       Logger.info("success: save Users and Friends")
       exit
     end
